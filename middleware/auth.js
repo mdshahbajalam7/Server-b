@@ -1,0 +1,29 @@
+import jwt from "jsonwebtoken";
+// went linke a post 
+const auth = async (req, res, next) => {
+  try {
+    // console.log(req.headers);
+    const token = req.headers.authorization.split(" ")[1];
+    const isCustomAuth = token.length < 500;
+
+    let decodedData;
+
+    if (token && isCustomAuth) {
+      decodedData = jwt.verify(token, "textjwt");
+
+
+      req.userId = decodedData?.id
+    }
+    else{
+        decodedData = jwt.decode(token)
+        req.userId = decodedData?.sub  //sub is google id 
+    }
+
+
+    next();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export default auth

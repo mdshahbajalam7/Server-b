@@ -6,6 +6,7 @@ import dotenv from 'dotenv'
 
 // all routes there
 import PostRoutes from "./routes/post.js";
+import userRouters from "./routes/users.js";
 
 const app = express();
 dotenv.config()
@@ -16,6 +17,7 @@ app.use(bodyparser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
 app.use("/posts", PostRoutes);
+app.use("/user",userRouters)
 
 app.get("/",(req,res)=>{
   
