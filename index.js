@@ -2,14 +2,14 @@ import express from "express";
 import bodyparser from "body-parser";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
 // all routes there
 import PostRoutes from "./routes/post.js";
 import userRouters from "./routes/users.js";
 
 const app = express();
-dotenv.config()
+dotenv.config();
 
 app.use(bodyparser.json({ limit: "30mb", extended: true }));
 app.use(bodyparser.urlencoded({ limit: "30mb", extended: true }));
@@ -17,22 +17,22 @@ app.use(bodyparser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
 
 app.use("/posts", PostRoutes);
-app.use("/user",userRouters)
+app.use("/user", userRouters);
 
-app.get("/",(req,res)=>{
-  
-})
+app.get("/", (req, res) => {
+  res.send("Full-Stack MERN Projects");
+});
 
 const PORT = process.env.PORT || 5000;
 
 mongoose
-  .connect( process.env.CONNECTION_URL, {
+  .connect(process.env.CONNECTION_URL, {
     useNewURLParser: true,
     useUnifiedTopology: true,
   })
   .then(() =>
     app.listen(PORT, () => {
-        console.log("connection successfully");
+      console.log("connection successfully");
       console.log(`server running on port  ${PORT}`);
     })
   )
