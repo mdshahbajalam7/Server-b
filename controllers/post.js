@@ -3,6 +3,7 @@ import PostMessage from "../models/postMessage.js";
 
 export const getPosts = async (req, res) => {
   const { page } = req.query;
+  console.log(page);
   try {
     const LIMIT = 4;
     const startIndex = (Number(page) - 1) * LIMIT; //get the starting index of every page
@@ -24,10 +25,13 @@ export const getPosts = async (req, res) => {
 
 export const getPostsBySearch = async (req, res) => {
   const { searchQuery, tags } = req.query;
+  let tagArray = []
+  if(tags!=undefined){
+    tagArray = tags.split(",")
+  }
   try {
-    const title = new RegExp(searchQuery, "i");
-    const posts = await PostMessage.find({
-      $or: [{ title }, { tags: { $in: tags.split(',') } }],
+    // const title = new RegExp(searchQuery, "i");
+    const posts = await PostMessage.find({ title:searchQuery    
     });
     // const posts = await PostMessage.find({ $or: [{ title: title }, {tags: {$in: tags.split(',')}}] })
     res.status(200).json({ data: posts });
