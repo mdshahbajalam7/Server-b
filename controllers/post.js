@@ -98,7 +98,6 @@ export const createPosts = async (req, res) => {
   }
 };
 
-// export const
 
 // Update Data
 export const updatePost = async (req, res) => {
@@ -160,3 +159,15 @@ export const likepost = async (req, res) => {
   // );
   res.json(updatePost);
 };
+
+export const commnetpost = async(req, res) => {
+  const { id } = req.params;
+  const {value } = req.body;
+  // 57
+  const post = await PostMessage.findById(id); 
+  post.comments.push(value)
+
+  const updatePost = await PostMessage.findByIdAndUpdate(id, post,{new: true})
+  res.json(updatePost);
+  
+}
