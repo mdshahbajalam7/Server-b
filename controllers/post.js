@@ -3,7 +3,6 @@ import PostMessage from "../models/postMessage.js";
 
 export const getPosts = async (req, res) => {
   const { page } = req.query;
-  console.log(page);
   try {
     const LIMIT = 4;
     const startIndex = (Number(page) - 1) * LIMIT; //get the starting index of every page
@@ -23,36 +22,37 @@ export const getPosts = async (req, res) => {
   }
 };
 
-export const getPostsBySearch = async (req, res) => {
-  const { searchQuery, tags } = req.query;
-  let tagArray = []
-  if(tags!=undefined){
-    tagArray = tags.split(",")
-  }
-  try {
-    // const title = new RegExp(searchQuery, "i");
-    const posts = await PostMessage.find({ title:searchQuery    
-    });
-    // const posts = await PostMessage.find({ $or: [{ title: title }, {tags: {$in: tags.split(',')}}] })
-    res.status(200).json({ data: posts });
-  } catch (error) {
-    res.status(404).json({ message: error.message });
-  }
-};
-
 // export const getPostsBySearch = async (req, res) => {
 //   const { searchQuery, tags } = req.query;
+//   let tagArray = []
+//   if(tags!=undefined){
+//     tagArray = tags.split(",")
+//   }
 //   try {
-//     const title = new RegExp(searchQuery, "i");
-//     const posts = await PostMessage.find({
-//       $or: [{ title: String(title) }, { tags: { $in: tags.split(",") } }],
+//     // const title = new RegExp(searchQuery, "i");
+//     const posts = await PostMessage.find({ title:searchQuery
 //     });
-//     res.json({ data: posts });
+//     // const posts = await PostMessage.find({ $or: [{ title: title }, {tags: {$in: tags.split(',')}}] })
+//     res.status(200).json({ data: posts });
 //   } catch (error) {
-//     console.log(error);
 //     res.status(404).json({ message: error.message });
 //   }
 // };
+
+export const getPostsBySearch = async (req, res) => {
+  const { searchQuery, tags } = req.query;
+  console.log("searchQuery",searchQuery,"tags",tags);
+  try {
+    const title = new RegExp(searchQuery, "i");
+    const posts = await PostMessage.find({
+      $or: [{ title }, { tags: { $in: tags.split(",") } }],
+    });
+    res.json({ data: posts });
+  } catch (error) {
+    // console.log(error);
+    res.status(404).json({ message: error.message });
+  }
+};
 
 export const getpost = async (req, res) => {
   const { id } = req.params;
@@ -90,6 +90,7 @@ export const createPosts = async (req, res) => {
     creator: req.userId,
     createdAt: new Date().toISOString(),
   });
+
   try {
     await newPost.save();
     res.status(201).json(newPost);
@@ -97,7 +98,6 @@ export const createPosts = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
-
 
 // Update Data
 export const updatePost = async (req, res) => {
@@ -123,7 +123,7 @@ export const deletepost = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send("No post with that id");
 
-  PostMessage.findByIdAndRemove(id);
+  await PostMessage.findByIdAndRemove(id);
   res.json({ message: "post delete successfully" });
 };
 // LIKE POST HERE
@@ -160,14 +160,15 @@ export const likepost = async (req, res) => {
   res.json(updatePost);
 };
 
-export const commnetpost = async(req, res) => {
+export const commnetpost = async (req, res) => {
   const { id } = req.params;
-  const {value } = req.body;
+  const { value } = req.body;
   // 57
-  const post = await PostMessage.findById(id); 
-  post.comments.push(value)
+  const post = await PostMessage.findById(id);
+  post.comments.push(value);
 
-  const updatePost = await PostMessage.findByIdAndUpdate(id, post,{new: true})
+  const updatePost = await PostMessage.findByIdAndUpdate(id, post, {
+    new: true,
+  });
   res.json(updatePost);
-  
-}
+};

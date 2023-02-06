@@ -13,9 +13,10 @@ import auth from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.get("/search", getPostsBySearch);
+
 router.get("/:id", getpost);
 router.get("/", getPosts);
+router.get("/search", getPostsBySearch);
 router.post("/", auth, createPosts);
 router.patch("/:id", auth, updatePost);
 router.delete("/:id", auth, deletepost);
